@@ -1,0 +1,38 @@
+<nav class="navbar navbar-dark navbar-expand-lg bg-dark mb-4 d-flex flex-row">
+    <div class="container-fluid">
+        <a class="navbar-brand d-none d-sm-block" href="/">MSPS</a>
+        {% if request.path != "/" %}
+        <form class="d-flex">
+            <input id="searchbar" list="searchresults" type="text" class="form-control"
+                placeholder="Enter Your Search Query" aria-label="query">
+            <div class="input-group-append">
+                <button id="searchbutton" class="btn btn-outline-secondary" type="button">Search</button>
+            </div>
+            <datalist id="searchresults"></datalist>
+        </form>
+        {% endif %}
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav navbar-text ms-auto">
+                {% if not session['loggedin'] %}
+                <li class="nav-item"><a class="nav-link" href="/login">Login</a></li>
+                <li class="nav-item"><a class="nav-link" href="/register">Register</a></li>
+                {% else %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        {{ session['user'] }}
+                    </a>
+                    <ul class="dropdown-menu bg-dark" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="/ads">Create Ads</a></li>
+                        <li><a class="dropdown-item" href="/logout">Logout</a></li>
+                    </ul>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>

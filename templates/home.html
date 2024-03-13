@@ -1,0 +1,37 @@
+{% extends 'layouts/container.html' %}
+{% block content %}
+<!-- Custom ajax implementation -->
+<div class="row">
+    <div class="col">
+    </div>
+    <div class="col-6 text-center">
+        <img src="{{ url_for('static',filename='img/turdlogo.png') }}" style="max-width:100%" />
+    </div>
+    <div class="col">
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+    </div>
+    <div class="col-6">
+        <div class="input-group mb-3">
+            <input id="searchbar" list="searchresults" type="text" class="form-control"
+                placeholder="Enter Your Search Query" aria-label="query">
+            <div class="input-group-append">
+                <button id="searchbutton" class="btn btn-outline-secondary" type="button">Search</button>
+            </div>
+            <datalist id="searchresults"></datalist>
+        </div>
+    </div>
+    <div class="col">
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+    </div>
+    <div class="col-6 text-center" id="dailyfacts">
+    </div>
+    <div class="col">
+    </div>
+</div>
+{% endblock %}

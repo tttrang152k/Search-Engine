@@ -1,0 +1,16 @@
+{% extends 'layouts/container.html' %}
+{% block content %}
+<div class="row">
+    <div class="col-8">
+        {% for d in data %}
+        <div class="row">
+            <h3><a href="/render/{{ d[3] }}">{{ d[0]|safe }}</a></h3>
+            <em>{{ d[2] }}</em>
+            <p>{{ d[1] }}...</p>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="col">
+    </div>
+</div>
+{% endblock %}

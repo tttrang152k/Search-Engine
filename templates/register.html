@@ -1,0 +1,29 @@
+{% extends 'layouts/container.html' %}
+{% block content %}
+<script src="{{ url_for('static',filename='js/register.js') }}"></script>
+<div class="row">
+    <div class="col">
+    </div>
+    <div class="col-8">
+        <h1>Register</h1>
+        <em id="status"></em>
+        <form id="regForm" name="regForm">
+            <div class="mb-3">
+                <label for="regEmail" class="form-label">Email address</label>
+                <input type="email" class="form-control" id="regEmail" name="email">
+            </div>
+            <div class="mb-3">
+                <label for="regPassword" class="form-label">Password</label>
+                <input type="password" class="form-control" id="regPassword" name="password">
+            </div>
+            <div class="mb-3">
+                <label for="cregPassword" class="form-label">Confirm Password</label>
+                <input type="password" class="form-control" id="cregPassword" name="cpassword">
+            </div>
+            <button type="submit" class="btn btn-primary">Register</button>
+        </form>
+    </div>
+    <div class="col">
+    </div>
+</div>
+{% endblock %}

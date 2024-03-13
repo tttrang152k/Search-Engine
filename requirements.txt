@@ -1,0 +1,7 @@
+bs4
+lxml
+nltk
+mysql-connector-python
+flask
+flask-session
+rake-nltk

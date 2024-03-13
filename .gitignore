@@ -1,0 +1,11 @@
+# DEV folder should also be ignored tbh
+*.json
+DEV/
+DEV2/
+indexes/*.json
+.DS_Store
+**/.DS_Store
+__pycache__/
+report.txt
+flask_session/
+split_indexes/
