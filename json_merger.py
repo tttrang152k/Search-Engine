@@ -1,6 +1,18 @@
 import json
 import os
 
+
+# combined inverted index from both indexes files
+# {
+#   "word": {
+#       "locations": {
+#       doc_id: frequency
+#       }
+#   }
+# }
+
+
+# from 2 indexes files, keep merging into 1
 # Call this function recursively until only one file is left in the indexes directory
 def mergeFiles(f1: str, f2: str) -> None:
     # Open and load both files
@@ -8,6 +20,8 @@ def mergeFiles(f1: str, f2: str) -> None:
         data1 = json.load(f)
     with open(os.path.join("indexes",f2)) as f:
         data2 = json.load(f)
+
+
     # Iterate through key-value pairs and add to the second dictionary
     for k,v in data1.items():
         # If not exists in dict #2, just add it

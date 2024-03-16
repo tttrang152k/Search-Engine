@@ -4,6 +4,8 @@ from collections import defaultdict
 import os
 import sys
 
+
+
 # Call this on a singular index to split it into alphabetical/miscellaneous files
 def splitFile(f1: str) -> None:
     # Create the split_indexes folder if not exists

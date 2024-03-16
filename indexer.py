@@ -19,7 +19,7 @@ except:
     print("MySQL is not installed on this machine")
 
 
-# BASE structure for inverted index, can add more attributes:
+# BASE structure for inverted index (created as indexes file), can add more attributes:
 # {
 #   "word": {
 #       "locations": {
@@ -29,6 +29,7 @@ except:
 # }
 # Can maybe add an "importance" value based on what document it is retrieved from
 # Might want to break index into chunks so memory does not get depleted; merge all indexes together in the end
+
 
 #Auxillary Structure for td-idf:
 #{
@@ -40,6 +41,7 @@ except:
 #   "doc": number of terms in document 
 # 
 # }
+
 
 
 if __name__ == "__main__":
@@ -69,10 +71,10 @@ if __name__ == "__main__":
 
     #Maps term to collection frequency 
     dfMap = {}
-    #maps doc to number of terms the doc has 
-    #tfMap = {}
+    #maps doc to number of terms the doc has --> changed to calculate the term vector vs document vector
+    #tfMap = {} 
 
-    # Maps doc ids to url (doc_id and url must be unique)
+    # Maps doc ids to url ({doc_id --> url} must be unique)
     urlMap = {}
     
     # File "id"
@@ -89,17 +91,16 @@ if __name__ == "__main__":
     for f in os.listdir('indexes'):
         os.remove(os.path.join('indexes', f))
 
+    # DEV/directory/files --> pages in files
     for root, dirs, files in os.walk(docPath):
         dirs.sort() #sort dirs so they are in the same order every time
         for page in files:
-            
             
             with open(os.path.join(root, page), encoding = 'utf8') as json_file:
                 data = json.load(json_file)
             extension = splitext(urlparse(data["url"]).path)[1] #gets the extension 
             if(extension != '.txt' and extension != '.php' and extension != '.bib'): #Note: Unclear whether the "parse html" part of the assignment means the content rather than the website type -Vik
-                
-                
+                # get url in this page and clean the defragment
                 parsed = urlparse(data["url"])
                 clean_url = data["url"]
                 if parsed.fragment != '':
@@ -110,7 +111,11 @@ if __name__ == "__main__":
                 else: 
                     continue
                     
+                # create a pathMap for 
                 pathMap[fid] = os.path.join(root, page)
+
+                # add more weight to a doc based on terms when they appeared in title or headers
+                # or in bold/strong sentences
                 
                 test_file_contents = data["content"]
                 fcontent = BeautifulSoup(test_file_contents, 'lxml')
@@ -236,7 +241,10 @@ if __name__ == "__main__":
     for i in range(1, iid):
         mergeFiles(files[0], files[i])
         
-    # splitting files
+    # splitting all terms into separate files based on alphabetical order
+    # making another dir called splitted_indexes which contains 
+    # multiples index files A.json, B.json,... Z.json and misc in which term is not a word
+    # will be put in misc.json
     with open(os.path.join("indexes","index1.json")) as f:    
         json_splitter.splitFile("index1.json")
 

@@ -36,12 +36,16 @@ letter_indexes = {}
 #term -> term that's being searched for
 #doc -> doc you're searching in 
 #freq -> to get the times the term occurs in the doc
+#having the query and document as vector. Compute the consine similarity score for the query vector and 
+#each document vector
+# cos(vector(q),vector(d)) = vector(q)*vector(d) = SUM(q_i*d_i) (i->V -- num vectors)
+# using very standard weighting scheme: lnc.ltc
 def findTdidfWeight(term: string, doc: string, freq: int):
 
-    #tf = freq/tfMap[doc]
-    tf = freq         # cannot use freq/tfMap[doc]
+    #tf = freq/tfMap[doc] -- no longer use tfMap[doc]
+    tf = freq         
     if term in dfMap:
-        idf = dfMap["TOTAL_DOCS"]/(dfMap[term]+1)
+        idf = dfMap["TOTAL_DOCS"]/(dfMap[term]+1)   
     else:
         idf = 1
     weight = (1 + math.log10(tf)) * (math.log10(idf))
@@ -49,7 +53,7 @@ def findTdidfWeight(term: string, doc: string, freq: int):
     return weight
 
 
-# intersection function based on the pseudocode from class notes
+# intersection function --> not very optimized and relevant
 def intersection(x: list, y: list) -> list:
     #print(x)
     #print(y)
@@ -76,7 +80,7 @@ def find_urls(index_list) -> list: #returns a list of urls associated with the g
         urls.append(urlTable[i])                 # use url lookup table directly
     return urls
 
-# Find the URLs from the mapped path file
+# Find the URLs from the mapped path file --> for webserver.py
 def find_urlsSE(index_list) -> list: #returns a list of urls associated with the given fids 
     urls = []
     for i in index_list:
@@ -87,23 +91,29 @@ def find_urlsSE(index_list) -> list: #returns a list of urls associated with the
             urls.append([urldefrag(data["url"])[0], i, urlpath[i]])
     return urls
 
-# Create the list of documents to find intersections from
+# Create the dict of terms along with docs + term in each doc
 def buildDocDictionary(inputs: list) -> list:
     docs_dict = {}
-    stemmer = PorterStemmer()
+    stemmer = PorterStemmer()   # for split the tokens
+
     # makes sure the variables defined in __main__ can be used here 
-    # (had a problem with using misc_ind inside this function)
+    # (had a problem with using misc_ind inside this function) --> global
     global misc_ind 
     global letter_indexes
-    # For each individual word, find the entry in the index, should implement boolean logic here too.
 
+    # For each individual word, find the entry in the index, should implement boolean logic here too.
     for query in inputs:
 
         stemmed = stemmer.stem(query)
         
         first_char = stemmed[0]
+
+        # stemmed file will have docs along with frequency of the term represented in each doc
+        # optimization done here by using the splitted_index files since if we already load the json file
+        # next time we won't have to reload it again but directly use it --> time optimization
        
         # If first character in the word is a letter, find associated word in stemmed file
+        # ex: Amen --> file word in A.json splitted_index file
         if first_char in list(string.ascii_lowercase):
             #letter_indexes[first_char] = json.load(open(os.path.join("split_indexes", first_char + ".json")))
             if (first_char in letter_indexes) and os.path.exists(os.path.join("split_indexes", first_char + ".json")) and (letter_indexes[first_char] == ""):
@@ -117,12 +127,13 @@ def buildDocDictionary(inputs: list) -> list:
                 misc_ind = json.load(open(os.path.join("split_indexes", "misc" + ".json")))
             stemmed_index = misc_ind
             
+        # get dict of all docs that contain the term
         # Dict that map terms to docs       
         if stemmed in stemmed_index:
            docs_dict[stemmed] =  stemmed_index[stemmed]['locations']
 
         else:
-            print("This query is not found in the search index")  # quit if the query isn't in the index
+            print("This query is not found in the search index")  # not quit if the query isn't in the index but just for logging purpose
             continue
     
     return docs_dict
@@ -183,19 +194,21 @@ if __name__ == "__main__":
         docs_dictionary = buildDocDictionary(queries)
 
         tdidfDict = {}
-        #Dictionary for holding the td-idf scores of each document, total
-        # { doc: td-idf }
+        #Dictionary for holding the td-idf scores of each document
+        # { doc_id: td-idf score}
         #Eventually needs to sort doc-id by value 
         #then need to grab top 10
 
-        #term at a time query processing 
+        # one term at a time query processing 
+        # calculate tf-idf score for each term and sum all the partical tf-idf scores for each doc
         for term in docs_dictionary:
             #for each term, calculate the partial td-idf in each document it appears in 
+            #term, k : doc_id, v : frequency of term in this doc
             for k,v in docs_dictionary[term].items():
                 temp_weight = findTdidfWeight(term,k,v)
-                if(k not in tdidfDict):
+                if(k not in tdidfDict):     # new doc_id
                     tdidfDict[k] = temp_weight
-                else:
+                else:                       # add new partial tf-idf weight to already-included doc_id
                     tdidfDict[k] += temp_weight
 
         # sort the docs list based on the tf-idf scores
