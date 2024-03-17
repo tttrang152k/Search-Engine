@@ -14,7 +14,7 @@ import math
 INDEX_PATH = 'indexes/index1.json'
 URL_PATH = 'pathmap.json'
 DF_PATH = 'df_map.json'
-#TF_PATH = 'tf_map.json'
+#TF_PATH = 'tf_map.json' directly get from dfmap
 URL = 'urlmap.json'
 
 with open(URL_PATH) as f:
